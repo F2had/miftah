@@ -20,12 +20,15 @@ npm install miftah
 ## Usage
 
 ```ts
-import { keyboardUnmap, keyboardFilter } from 'miftah'
+import { keyboardUnmap, keyboardRemap, keyboardFilter } from 'miftah'
 
-// Direct unmap — Arabic keyboard input → Latin
+// Unmap — Arabic keyboard input → Latin
 keyboardUnmap('عربي')   // → 'uvfd'
-keyboardUnmap('hello')   // → 'hello'  (Latin passes through)
-keyboardUnmap('')        // → ''
+keyboardUnmap('hello')  // → 'hello'  (Latin passes through)
+
+// Remap — Latin keys → Arabic chars (reverse direction)
+keyboardRemap('flag')   // → 'بمشل'  (what those keys produce on Arabic layout)
+keyboardRemap('عربي')   // → 'عربي'  (Arabic passes through)
 
 // Plain JS filter
 items.filter(item => keyboardFilter(item.name, searchQuery))
@@ -34,7 +37,8 @@ items.filter(item => keyboardFilter(item.name, searchQuery))
 // <VAutocomplete :custom-filter="(v, s) => keyboardFilter(v, s)" />
 
 // With options
-keyboardFilter('arabic', 'عربي')                                  // → true  (keyboard match)
+keyboardFilter('arabic', 'عربي')                                  // → true  (keyboard unmap match)
+keyboardFilter('بمشل', 'flag')                                    // → true  (keyboard remap match)
 keyboardFilter('thursday', 'ث')                                   // → true  (phonetic: th)
 keyboardFilter('2024', '٢٠٢٤')                                    // → true  (numeral normalization)
 keyboardFilter('Hello', 'HELLO', { caseSensitive: true })         // → false
@@ -51,15 +55,25 @@ Converts Arabic keyboard layout characters back to the Latin keys that produced 
 | `input` | `string` | — |
 | `layout` | `'windows-arabic' \| 'mac-arabic'` | `'windows-arabic'` |
 
+### `keyboardRemap(input, layout?)`
+
+Converts Latin keys to the Arabic characters they produce on the given keyboard layout. The reverse of `keyboardUnmap`. Non-Latin characters and unmapped keys pass through unchanged.
+
+| Parameter | Type | Default |
+|---|---|---|
+| `input` | `string` | — |
+| `layout` | `'windows-arabic' \| 'mac-arabic'` | `'windows-arabic'` |
+
 ### `keyboardFilter(value, search, options?)`
 
 Returns `true` if `value` matches `search` via any of these strategies, in order:
 
 1. Empty search — always true
 2. Direct match (case and numeral normalized)
-3. Keyboard layout match — unmap `search` from Arabic key positions and check against `value`
-4. Phonetic match — transliterate `search` (Arabic→Latin) and check against `value`
-5. No match — false
+3. Keyboard layout unmap — convert Arabic chars in `search` to Latin keys, check against `value`
+4. Phonetic match — transliterate Arabic chars in `search` to Latin, check against `value`
+5. Keyboard layout remap — convert Latin keys in `search` to Arabic chars, check against `value`
+6. No match — false
 
 | Option | Type | Default |
 |---|---|---|
