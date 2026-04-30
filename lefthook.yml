@@ -1,7 +1,10 @@
 pre-commit:
   commands:
+    format:
+      glob: '*.ts'
+      run: bunx biome format --write {staged_files}
     lint:
-      glob: "*.ts"
-      run: bunx biome check --apply {staged_files}
+      glob: '*.ts'
+      run: bunx biome lint {staged_files}
     test:
       run: bun test

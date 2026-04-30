@@ -9,9 +9,13 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -20,8 +24,17 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Format
+        run: bunx biome format --write .
+
+      - name: Push formatting fixes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git diff --quiet || (git commit -am "style: apply biome formatting" && git push)
+
       - name: Lint
-        run: bunx biome check .
+        run: bunx biome lint .
 
       - name: Test
         run: bun test

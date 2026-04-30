@@ -24,15 +24,21 @@ const normalize = (s: string, caseSensitive: boolean): string => {
 const phoneticTransliterate = (input: string): string =>
   [...input].map((char) => phoneticMap[char] ?? char).join('');
 
-export const keyboardUnmap = (input: string, layout: Layout = 'windows-arabic'): string =>
-  [...input].map((char) => layouts[layout][char] ?? char).join('');
+export const keyboardUnmap = (
+  input: string,
+  layout: Layout = 'windows-arabic',
+): string => [...input].map((char) => layouts[layout][char] ?? char).join('');
 
 export const keyboardFilter = (
   value: string,
   search: string,
   options: FilterOptions = {},
 ): boolean => {
-  const { layout = 'windows-arabic', phonetic: usePhonetic = true, caseSensitive = false } = options;
+  const {
+    layout = 'windows-arabic',
+    phonetic: usePhonetic = true,
+    caseSensitive = false,
+  } = options;
 
   if (search === '') return true;
 
@@ -42,11 +48,19 @@ export const keyboardFilter = (
   if (nValue.includes(nSearch)) return true;
 
   const unmapped = keyboardUnmap(search, layout);
-  if (unmapped !== search && nValue.includes(normalize(unmapped, caseSensitive))) return true;
+  if (
+    unmapped !== search &&
+    nValue.includes(normalize(unmapped, caseSensitive))
+  )
+    return true;
 
   if (usePhonetic) {
     const phonetized = phoneticTransliterate(search);
-    if (phonetized !== search && nValue.includes(normalize(phonetized, caseSensitive))) return true;
+    if (
+      phonetized !== search &&
+      nValue.includes(normalize(phonetized, caseSensitive))
+    )
+      return true;
   }
 
   return false;
