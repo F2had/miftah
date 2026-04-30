@@ -1,8 +1,9 @@
 {
   "name": "miftah",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Arabic keyboard layout search filter — maps Arabic keyboard input back to Latin for correct search matching",
   "type": "module",
+  "main": "./dist/index.cjs",
   "sideEffects": false,
   "exports": {
     ".": {
