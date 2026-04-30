@@ -1,0 +1,7 @@
+pre-commit:
+  commands:
+    lint:
+      glob: "*.ts"
+      run: bunx biome check --apply {staged_files}
+    test:
+      run: bun test
