@@ -1,6 +1,9 @@
 # miftah
 
 [![CI](https://github.com/F2had/miftah/actions/workflows/ci.yml/badge.svg)](https://github.com/F2had/miftah/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/miftah)](https://www.npmjs.com/package/miftah)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/miftah)](https://bundlephobia.com/package/miftah)
+[![license](https://img.shields.io/npm/l/miftah)](./LICENSE)
 
 Arabic-speaking users often type on a QWERTY keyboard with their OS input switched to Arabic. Their muscle memory produces Arabic characters — `عربي` instead of `uvfd` — because the mapping is by key position, not by sound.
 
@@ -72,4 +75,4 @@ Mac Arabic is supported as a named variant via `layout: 'mac-arabic'`.
 
 ## License
 
-MIT
+[MIT](./LICENSE)
