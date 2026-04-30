@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { keyboardFilter, keyboardUnmap } from '@/index';
+import { keyboardFilter, keyboardRemap, keyboardUnmap } from '@/index';
 
 describe('keyboardUnmap', () => {
   test('empty string returns empty string', () => {
@@ -8,7 +8,7 @@ describe('keyboardUnmap', () => {
 
   test('latin input passes through unchanged', () => {
     expect(keyboardUnmap('hello')).toBe('hello');
-    expect(keyboardUnmap('Saudi Arabia')).toBe('Saudi Arabia');
+    expect(keyboardUnmap('hello world')).toBe('hello world');
   });
 
   test('western numerals pass through', () => {
@@ -23,22 +23,59 @@ describe('keyboardUnmap', () => {
     expect(keyboardUnmap('hello world')).toBe('hello world');
   });
 
-  test('saudi — s,a,u,d,i typed with Arabic input active', () => {
-    // s→س  a→ش  u→ع  d→ي  i→ه
-    expect(keyboardUnmap('سشعيه')).toBe('saudi');
+  test('flag — f,l,a,g typed with Arabic input active', () => {
+    // ب→f  م→l  ش→a  ل→g
+    expect(keyboardUnmap('بمشل')).toBe('flag');
   });
 
-  test('riyal — r,i,y,a,l typed with Arabic input active', () => {
-    // r→ق  i→ه  y→غ  a→ش  l→م
-    expect(keyboardUnmap('قهغشم')).toBe('riyal');
+  test('glad — g,l,a,d typed with Arabic input active', () => {
+    // ل→g  م→l  ش→a  ي→d
+    expect(keyboardUnmap('لمشي')).toBe('glad');
   });
 
   test('mixed latin and arabic', () => {
-    expect(keyboardUnmap('hello سشعيه')).toBe('hello saudi');
+    expect(keyboardUnmap('hello بمشل')).toBe('hello flag');
   });
 
   test('mac-arabic layout', () => {
-    expect(keyboardUnmap('سشعيه', 'mac-arabic')).toBe('saudi');
+    expect(keyboardUnmap('بمشل', 'mac-arabic')).toBe('flag');
+  });
+});
+
+describe('keyboardRemap', () => {
+  test('empty string returns empty string', () => {
+    expect(keyboardRemap('')).toBe('');
+  });
+
+  test('arabic input passes through unchanged', () => {
+    expect(keyboardRemap('بمشل')).toBe('بمشل');
+  });
+
+  test('latin keys map to arabic chars — flag', () => {
+    // f→ب  l→م  a→ش  g→ل
+    expect(keyboardRemap('flag')).toBe('بمشل');
+  });
+
+  test('latin keys map to arabic chars — glad', () => {
+    // g→ل  l→م  a→ش  d→ي
+    expect(keyboardRemap('glad')).toBe('لمشي');
+  });
+
+  test('uppercase input passes through unchanged (no case folding — caller normalizes)', () => {
+    expect(keyboardRemap('FLAG')).toBe('FLAG');
+  });
+
+  test('comma maps to waw — letter wins over arabic punctuation alias', () => {
+    expect(keyboardRemap(',')).toBe('و');
+  });
+
+  test('mixed latin and arabic', () => {
+    // h→ا  e→ث  l→م  l→م  o→خ; arabic chars pass through
+    expect(keyboardRemap('hello بمشل')).toBe('اثممخ بمشل');
+  });
+
+  test('mac-arabic layout', () => {
+    expect(keyboardRemap('flag', 'mac-arabic')).toBe('بمشل');
   });
 });
 
@@ -52,16 +89,16 @@ describe('keyboardFilter', () => {
 
   describe('branch 2 — direct match', () => {
     test('exact latin match', () => {
-      expect(keyboardFilter('Saudi Arabia', 'saudi')).toBe(true);
+      expect(keyboardFilter('keyboard', 'key')).toBe(true);
     });
 
     test('case-insensitive by default', () => {
-      expect(keyboardFilter('Saudi Arabia', 'SAUDI')).toBe(true);
+      expect(keyboardFilter('keyboard', 'KEY')).toBe(true);
     });
 
     test('case-sensitive when opted in', () => {
-      expect(keyboardFilter('Saudi Arabia', 'SAUDI', { caseSensitive: true })).toBe(false);
-      expect(keyboardFilter('Saudi Arabia', 'Saudi', { caseSensitive: true })).toBe(true);
+      expect(keyboardFilter('Keyboard', 'KEY', { caseSensitive: true })).toBe(false);
+      expect(keyboardFilter('Keyboard', 'Key', { caseSensitive: true })).toBe(true);
     });
 
     test('eastern arabic numeral in value matches western numeral in search', () => {
@@ -74,20 +111,20 @@ describe('keyboardFilter', () => {
   });
 
   describe('branch 3 — keyboard layout match', () => {
-    test('arabic-typed search matches latin value — saudi', () => {
-      expect(keyboardFilter('Saudi Arabia', 'سشعيه')).toBe(true);
+    test('arabic-typed search matches latin value — flag', () => {
+      expect(keyboardFilter('flag', 'بمشل')).toBe(true);
     });
 
-    test('arabic-typed search matches latin value — riyal', () => {
-      expect(keyboardFilter('riyal', 'قهغشم')).toBe(true);
+    test('arabic-typed search matches latin value — glad', () => {
+      expect(keyboardFilter('glad', 'لمشي')).toBe(true);
     });
 
     test('partial keyboard match', () => {
-      expect(keyboardFilter('Saudi Arabia', 'سشع')).toBe(true);
+      expect(keyboardFilter('flag', 'بمش')).toBe(true);
     });
 
     test('mac-arabic layout option is respected', () => {
-      expect(keyboardFilter('Saudi Arabia', 'سشعيه', { layout: 'mac-arabic' })).toBe(true);
+      expect(keyboardFilter('flag', 'بمشل', { layout: 'mac-arabic' })).toBe(true);
     });
   });
 
@@ -102,9 +139,9 @@ describe('keyboardFilter', () => {
     });
 
     test('خ (kh sound) matches latin value containing "kh"', () => {
-      // keyboardUnmap('خ') = 'o' → 'khalid'.includes('o') = false → branch 3 skipped
-      // phonetic('خ') = 'kh' → 'khalid'.includes('kh') = true → branch 4 matches
-      expect(keyboardFilter('khalid', 'خ')).toBe(true);
+      // keyboardUnmap('خ') = 'o' → 'khaki'.includes('o') = false → branch 3 skipped
+      // phonetic('خ') = 'kh' → 'khaki'.includes('kh') = true → branch 4 matches
+      expect(keyboardFilter('khaki', 'خ')).toBe(true);
     });
 
     test('phonetic disabled via option', () => {
@@ -112,9 +149,41 @@ describe('keyboardFilter', () => {
     });
   });
 
-  describe('branch 5 — no match', () => {
+  describe('branch 5 — latin search remaps to arabic value', () => {
+    test('single latin key matches arabic value', () => {
+      // keyboardUnmap('f') = 'f' (no change) → branch 3 skipped
+      // phonetic('f') = 'f' (no change) → branch 4 skipped
+      // keyboardRemap('f') = 'ب' → 'بمشل'.includes('ب') = true
+      expect(keyboardFilter('بمشل', 'f')).toBe(true);
+    });
+
+    test('multi-char latin search matches consecutive arabic chars in value', () => {
+      // keyboardRemap('fl') = 'بم' — appears at the start of 'بمشل'
+      expect(keyboardFilter('بمشل', 'fl')).toBe(true);
+    });
+
+    test('full latin word matches arabic value that is the remap result', () => {
+      // keyboardRemap('flag') = 'بمشل'
+      expect(keyboardFilter('بمشل', 'flag')).toBe(true);
+    });
+
+    test('uppercase latin search is normalized before remapping', () => {
+      expect(keyboardFilter('بمشل', 'FLAG')).toBe(true);
+    });
+
+    test('latin search that remaps to non-matching arabic returns false', () => {
+      // keyboardRemap('glad') = 'لمشي' — not a substring of 'بمشل'
+      expect(keyboardFilter('بمشل', 'glad')).toBe(false);
+    });
+
+    test('mac-arabic layout option is respected', () => {
+      expect(keyboardFilter('بمشل', 'flag', { layout: 'mac-arabic' })).toBe(true);
+    });
+  });
+
+  describe('branch 6 — no match', () => {
     test('unrelated strings do not match', () => {
-      expect(keyboardFilter('Saudi Arabia', 'xyz')).toBe(false);
+      expect(keyboardFilter('hello', 'xyz')).toBe(false);
     });
 
     test('empty value with non-empty search', () => {
@@ -128,7 +197,7 @@ describe('keyboardFilter', () => {
     });
 
     test('spaces handled correctly', () => {
-      expect(keyboardFilter('Saudi Arabia', 'Saudi Arabia')).toBe(true);
+      expect(keyboardFilter('hello world', 'hello world')).toBe(true);
     });
 
     test('fully latin search skips keyboard unmap path when unmap produces no change', () => {
