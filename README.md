@@ -81,6 +81,10 @@ Returns `true` if `value` matches `search` via any of these strategies, in order
 | `phonetic` | `boolean` | `true` |
 | `caseSensitive` | `boolean` | `false` |
 
+## React Native
+
+Supported. On mobile, keyboard layout mismatch is rare — users explicitly switch keyboards. The phonetic path is the dominant match strategy on RN.
+
 ## Keyboard layout notes
 
 The default is Windows Arabic (101) — the most common layout in Gulf/MENA regions. The map is verified against the Windows Arabic (101) .klc source from Microsoft Keyboard Layout Creator.
