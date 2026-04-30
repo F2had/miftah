@@ -49,7 +49,8 @@ export const keyboardUnmap = (
 export const keyboardRemap = (
   input: string,
   layout: Layout = 'windows-arabic',
-): string => [...input].map((char) => reverseLayouts[layout][char] ?? char).join('');
+): string =>
+  [...input].map((char) => reverseLayouts[layout][char] ?? char).join('');
 
 export const keyboardFilter = (
   value: string,
@@ -70,17 +71,26 @@ export const keyboardFilter = (
   if (nValue.includes(nSearch)) return true;
 
   const unmapped = keyboardUnmap(search, layout);
-  if (unmapped !== search && nValue.includes(normalize(unmapped, caseSensitive)))
+  if (
+    unmapped !== search &&
+    nValue.includes(normalize(unmapped, caseSensitive))
+  )
     return true;
 
   if (usePhonetic) {
     const phonetized = phoneticTransliterate(search);
-    if (phonetized !== search && nValue.includes(normalize(phonetized, caseSensitive)))
+    if (
+      phonetized !== search &&
+      nValue.includes(normalize(phonetized, caseSensitive))
+    )
       return true;
   }
 
   const remapped = keyboardRemap(nSearch, layout);
-  if (remapped !== nSearch && nValue.includes(normalize(remapped, caseSensitive)))
+  if (
+    remapped !== nSearch &&
+    nValue.includes(normalize(remapped, caseSensitive))
+  )
     return true;
 
   return false;

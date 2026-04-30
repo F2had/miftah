@@ -2,7 +2,9 @@
 
 [![CI](https://github.com/F2had/miftah/actions/workflows/ci.yml/badge.svg)](https://github.com/F2had/miftah/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/miftah)](https://www.npmjs.com/package/miftah)
+[![npm downloads](https://img.shields.io/npm/dm/miftah)](https://www.npmjs.com/package/miftah)
 [![bundle size](https://img.shields.io/bundlephobia/minzip/miftah)](https://bundlephobia.com/package/miftah)
+[![bundle size](https://deno.bundlejs.com/?q=miftah&badge)](https://bundlejs.com/?q=miftah)
 [![license](https://img.shields.io/npm/l/miftah)](./LICENSE)
 
 Arabic-speaking users often type on a QWERTY keyboard with their OS input switched to Arabic. Their muscle memory produces Arabic characters — `عربي` instead of `uvfd` — because the mapping is by key position, not by sound.

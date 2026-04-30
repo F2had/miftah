@@ -1,6 +1,6 @@
 {
   "name": "miftah",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "Arabic keyboard layout search filter — maps Arabic keyboard input back to Latin for correct search matching",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -12,15 +12,25 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "bun build ./index.ts --outdir dist --format esm && bun build ./index.ts --outfile dist/index.cjs --format cjs && tsc --emitDeclarationOnly",
+    "prepublishOnly": "bun run build",
     "test": "bun test",
     "lint": "biome check .",
     "format": "biome format --write .",
     "postinstall": "lefthook install || true"
   },
-  "keywords": ["arabic", "keyboard", "search", "filter", "rtl", "unmap"],
+  "keywords": [
+    "arabic",
+    "keyboard",
+    "search",
+    "filter",
+    "rtl",
+    "unmap"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "latest",

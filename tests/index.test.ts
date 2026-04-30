@@ -97,8 +97,12 @@ describe('keyboardFilter', () => {
     });
 
     test('case-sensitive when opted in', () => {
-      expect(keyboardFilter('Keyboard', 'KEY', { caseSensitive: true })).toBe(false);
-      expect(keyboardFilter('Keyboard', 'Key', { caseSensitive: true })).toBe(true);
+      expect(keyboardFilter('Keyboard', 'KEY', { caseSensitive: true })).toBe(
+        false,
+      );
+      expect(keyboardFilter('Keyboard', 'Key', { caseSensitive: true })).toBe(
+        true,
+      );
     });
 
     test('eastern arabic numeral in value matches western numeral in search', () => {
@@ -124,7 +128,9 @@ describe('keyboardFilter', () => {
     });
 
     test('mac-arabic layout option is respected', () => {
-      expect(keyboardFilter('flag', 'بمشل', { layout: 'mac-arabic' })).toBe(true);
+      expect(keyboardFilter('flag', 'بمشل', { layout: 'mac-arabic' })).toBe(
+        true,
+      );
     });
   });
 
@@ -177,7 +183,9 @@ describe('keyboardFilter', () => {
     });
 
     test('mac-arabic layout option is respected', () => {
-      expect(keyboardFilter('بمشل', 'flag', { layout: 'mac-arabic' })).toBe(true);
+      expect(keyboardFilter('بمشل', 'flag', { layout: 'mac-arabic' })).toBe(
+        true,
+      );
     });
   });
 

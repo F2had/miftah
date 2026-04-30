@@ -16,6 +16,12 @@
     }
   },
   "files": {
-    "includes": ["src/**", "index.ts", "tests/**", "!!**/dist/", "!!**/node_modules/"]
+    "includes": [
+      "src/**",
+      "index.ts",
+      "tests/**",
+      "!!**/dist/",
+      "!!**/node_modules/"
+    ]
   }
 }
